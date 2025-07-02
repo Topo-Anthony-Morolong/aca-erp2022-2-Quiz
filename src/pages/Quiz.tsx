@@ -9,9 +9,10 @@ const Quiz = () => {
   const navigate = useNavigate();
 
   const handleAnswer = (answer: string) => {
+    if (selectedOption) return; // Prevent changing answer after selection
     setSelectedOption(answer);
     if (answer === questions[currentQuestionIndex].correctAnswer) {
-      setScore(score + 1);
+      setScore((prev) => prev+ 1);
     }
   };
 

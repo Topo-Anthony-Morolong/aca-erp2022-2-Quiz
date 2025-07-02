@@ -11,7 +11,7 @@ export const questions: Question[] = [
         "options": ["git add .", "git push", "git commit", "git init"],
         "correctAnswer": "git add ."
     },
-    {
+    /*{
         "question": "What git command is used to upload local repository content to a remote repository?",
         "options": ["git clone", "git pull", "git push", "git status"],
         "correctAnswer": "git push"
@@ -250,5 +250,5 @@ export const questions: Question[] = [
         "question": "Which command is used to delete a specific stash?",
         "options": ["git stash drop <stash_id>", "git stash delete <stash_id>", "git stash remove <stash_id>", "git stash clear <stash_id>"],
         "correctAnswer": "git stash drop <stash_id>"
-    }
+    }*/
 ];
