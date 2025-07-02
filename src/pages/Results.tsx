@@ -1,10 +1,17 @@
+import { useLocation, useNavigate } from "react-router-dom";
+
 const Result = () => {
-  const score = localStorage.getItem('quizScore') || 0;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { score, total } = location.state || { score: 0, total: 0 };
 
   return (
-    <div>
-      <h2>Your Score: {score}</h2>
-      <button onClick={() => window.location.href = '/'}>Try Again</button>
+    <div className="quiz-wrapper">
+      <div className="quiz-container">
+        <h2>Quiz Complete 🎉</h2>
+        <p>You scored {score} out of {total}</p>
+        <button onClick={() => navigate("/")}>Try Again</button>
+      </div>
     </div>
   );
 };
