@@ -57,26 +57,47 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Keyboard focus state for accessibility */
+button:focus {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* Group navigation buttons horizontally */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
 /* Options */
 .option-btn {
   display: block;
   width: 100%;
   text-align: left;
   margin-bottom: 10px;
-  padding: 16px; /* increased padding */
+  padding: 16px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   background-color: #f8fafc;
   transition: all 0.2s ease;
-  font-size: 1.1rem; /* larger text */
-  font-weight: 600;  /* bolder text */
-  color: #111827;    /* dark gray for contrast */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
 }
 
 .option-btn:hover {
   background-color: #e0f2fe;
 }
 
+/* Highlight selected answer (without showing correctness) */
+.option-btn.selected {
+  background-color: #dbeafe;
+  border-color: #60a5fa;
+}
+
+/* Show correct/wrong (for review screens) */
 .option-correct {
   background-color: #bbf7d0 !important;
   border-color: #22c55e;
@@ -92,9 +113,10 @@ button:disabled {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f3f4f6; /* light gray */
+  background-color: #f3f4f6;
   padding: 2rem;
 }
+
 .home-wrapper {
   display: flex;
   align-items: center;

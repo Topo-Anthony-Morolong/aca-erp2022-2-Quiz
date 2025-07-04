@@ -1,26 +1,17 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../data/superbaseClient";
 import { Question } from "../model/Question";
 
-
-
 const Quiz = () => {
-
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([]);
-
-  const [answered, setAnswered] = useState<Set<number>>(new Set());
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [index: number]: string }>({});
   const [skipped, setSkipped] = useState<number[]>([]);
-  const [reviewMode, setReviewMode] = useState(false);
-
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  
-  // Fetch questions from Supabase
+  // Fetch from Supabase
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true);
@@ -37,88 +28,75 @@ const Quiz = () => {
       }
       setLoading(false);
     };
-
     fetchQuestions();
   }, []);
 
   if (loading) return <div>Loading...</div>;
   if (questions.length === 0) return <div>No questions found.</div>;
 
+  const q = questions[currentQuestionIndex];
+  const selectedOption = selectedAnswers[currentQuestionIndex] || null;
+
   const handleAnswer = (answer: string) => {
-    if (selectedOption) return;
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [currentQuestionIndex]: answer,
+    }));
 
-    // Update answered set and remove from skipped if it exists
-    setAnswered((prevAnswered) => {
-      const updated = new Set(prevAnswered);
-      updated.add(currentQuestionIndex);
-      return updated;
-    });
-    setSkipped((prevSkipped) =>
-      prevSkipped.filter((index) => index !== currentQuestionIndex)
-    );
-
-    setSelectedOption(answer);
-
-    if (answer === questions[currentQuestionIndex].correctAnswer) {
-      setScore((prev) => prev + 1);
-    }
+    // Remove from skipped if previously skipped
+    setSkipped((prev) => prev.filter((i) => i !== currentQuestionIndex));
   };
 
-  const handleNextQuestion = () => {
-    if (!reviewMode && currentQuestionIndex + 1 < questions.length) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOption(null);
-    } else {
-      // In review mode or at end
-      const unansweredSkipped = skipped.filter((i) => !answered.has(i));
-
-      if (unansweredSkipped.length > 0) {
-        setReviewMode(true);
-        setCurrentQuestionIndex(unansweredSkipped[0]);
-        setSkipped(unansweredSkipped.slice(1)); // remove it from the front
-        setSelectedOption(null);
-      } else {
-        // Done
-        navigate("/result", { state: { score, total: questions.length } });
-      }
-    }
-  };
-
-  const handleSkipQuestion = () => {
-    if (!answered.has(currentQuestionIndex) && !skipped.includes(currentQuestionIndex)) {
+  const handleSkip = () => {
+    if (!selectedAnswers[currentQuestionIndex] && !skipped.includes(currentQuestionIndex)) {
       setSkipped((prev) => [...prev, currentQuestionIndex]);
     }
-    handleNextQuestion();
+    handleNext();
   };
 
-  const q = questions[currentQuestionIndex];
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleFinish = () => {
+    const score = questions.reduce((total, question, index) => {
+      return selectedAnswers[index] === question.correctAnswer ? total + 1 : total;
+    }, 0);
+
+    const remainingSkipped = questions
+      .map((_, i) => i)
+      .filter((i) => !selectedAnswers[i]);
+
+    navigate("/result", {
+      state: {
+        score,
+        total: questions.length,
+        skipped: remainingSkipped,
+      },
+    });
+  };
 
   return (
     <div className="quiz-wrapper">
       <div className="quiz-container">
-        <h2>
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </h2>
+        <h2>Question {currentQuestionIndex + 1} of {questions.length}</h2>
         <p>{q.question}</p>
 
         {q.options.map((option) => {
-          const isCorrect = option === q.correctAnswer;
-          const isSelected = option === selectedOption;
-
-          let className = "option-btn";
-          if (selectedOption) {
-            if (isCorrect) {
-              className += " option-correct";
-            } else if (isSelected) {
-              className += " option-wrong";
-            }
-          }
-
+          const isSelected = selectedOption === option;
+          const className = `option-btn ${isSelected ? "selected" : ""}`;
           return (
             <button
               key={option}
               onClick={() => handleAnswer(option)}
-              disabled={!!selectedOption}
               className={className}
             >
               {option}
@@ -126,25 +104,37 @@ const Quiz = () => {
           );
         })}
 
-        {selectedOption && selectedOption !== q.correctAnswer && (
-          <p style={{ color: "green", marginTop: "12px", fontWeight: "bold" }}>
-            Correct answer: {q.correctAnswer}
-          </p>
-        )}
+        <div style={{ marginTop: "20px" }}>
+          {currentQuestionIndex > 0 && (
+            <button onClick={handleBack} style={{ marginRight: "10px" }}>
+              Back
+            </button>
+          )}
 
-        {selectedOption ? (
-          <button onClick={handleNextQuestion}>
-            {reviewMode
-              ? skipped.length === 0
-                ? "Finish Quiz"
-                : "Next Skipped"
-              : currentQuestionIndex + 1 === questions.length && skipped.length === 0
-              ? "Finish Quiz"
-              : "Next"}
-          </button>
-        ) : (
-          <button onClick={handleSkipQuestion}>Skip</button>
-        )}
+          {currentQuestionIndex < questions.length - 1 ? (
+            <button
+              onClick={handleNext}
+              disabled={!selectedOption}
+              style={{ marginRight: "10px" }}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              onClick={handleFinish}
+              disabled={!selectedOption}
+              style={{ marginRight: "10px" }}
+            >
+              Finish Quiz
+            </button>
+          )}
+
+          {!selectedOption && (
+            <button onClick={handleSkip}>
+              Skip
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
