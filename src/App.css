@@ -57,26 +57,47 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Keyboard focus state for accessibility */
+button:focus {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+/* Group navigation buttons horizontally */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
 /* Options */
 .option-btn {
   display: block;
   width: 100%;
   text-align: left;
   margin-bottom: 10px;
-  padding: 16px; /* increased padding */
+  padding: 16px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   background-color: #f8fafc;
   transition: all 0.2s ease;
-  font-size: 1.1rem; /* larger text */
-  font-weight: 600;  /* bolder text */
-  color: #111827;    /* dark gray for contrast */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
 }
 
 .option-btn:hover {
   background-color: #e0f2fe;
 }
 
+/* Highlight selected answer (without showing correctness) */
+.option-btn.selected {
+  background-color: #dbeafe;
+  border-color: #60a5fa;
+}
+
+/* Show correct/wrong (for review screens) */
 .option-correct {
   background-color: #bbf7d0 !important;
   border-color: #22c55e;
@@ -92,9 +113,10 @@ button:disabled {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f3f4f6; /* light gray */
+  background-color: #f3f4f6;
   padding: 2rem;
 }
+
 .home-wrapper {
   display: flex;
   align-items: center;
@@ -137,4 +159,331 @@ button:disabled {
 
 .home-container button:hover {
   background-color: #1d4ed8;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.skipped-list {
+    max-height: 200px; /* Make it scrollable if many skipped */
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.skipped-list p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dotted #e0e0e0;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.skipped-list p:last-child {
+    border-bottom: none;
+}
+
+.skipped-list button {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.skipped-list button:hover {
+    background-color: #0056b3;
+}
+
+.modal-actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.modal-cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.modal-cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.modal-confirm-btn {
+    background-color: #dc3545; /* Red for confirmation to finish with skips */
+    color: white;
+}
+
+.modal-confirm-btn:hover {
+    background-color: #c82333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* App.css */
+
+/* ... (existing CSS) ... */
+
+/* results page specific */
+.results-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 20px;
+}
+
+.results-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px; /* Adjusted max-width for more content */
+    text-align: center;
+}
+
+.results-container h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.2em;
+}
+
+.results-container p {
+    color: #555;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+.result-status {
+    font-weight: bold;
+    font-size: 1.3em;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.result-status.success {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border: 1px solid #c3e6cb;
+}
+
+.result-status.failure {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red */
+    border: 1px solid #f5c6cb;
+}
+
+/* Buttons on results page */
+.try-again-btn, .go-home-btn {
+    background-color: #2563eb; /* Blue from your existing buttons */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 20px;
+    margin-bottom: 10px; /* Added margin for spacing if both are present */
+}
+
+.try-again-btn:hover, .go-home-btn:hover {
+    background-color: #1d4ed8;
+}
+
+/* Review Sections */
+.review-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    text-align: left; /* Align text within review items to left */
+}
+
+.review-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+    text-align: center; /* Center the section title */
+}
+
+.skipped-questions-section,
+.answered-review-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fefefe;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.skipped-questions-section h4,
+.answered-review-section h4 {
+    color: #444;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.skipped-questions-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.skipped-questions-section li {
+    background-color: #fff3cd; /* Light yellow for skipped */
+    border: 1px solid #ffeeba;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 1em;
+}
+
+.question-review-item {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px; /* Reduced margin for closer spacing */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.question-review-item h5 { /* Changed from h4 to h5 for hierarchy */
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.options-review p {
+    padding: 10px 15px;
+    margin: 8px 0;
+    border-radius: 6px;
+    font-size: 1em;
+    display: flex; /* For aligning indicators */
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e0e0e0; /* Add a default border */
+}
+
+.review-option {
+    background-color: #e9ecef; /* Neutral grey for options */
+    color: #495057;
+}
+
+/* User answered correctly */
+.review-option.user-correct {
+    background-color: #d4edda; /* Light green */
+    color: #155724;
+    font-weight: bold;
+    border-color: #28a745;
+}
+
+/* User answered wrongly */
+.review-option.user-wrong {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24;
+    font-weight: bold;
+    border-color: #dc3545;
+}
+
+/* The actual correct answer (highlighted if user was wrong) */
+.review-option.correct-highlight { /* Changed class name for clarity */
+    background-color: #cce5ff; /* Light blue */
+    color: #004085;
+    font-weight: bold;
+    border-color: #007bff;
+}
+
+/* Indicators */
+.indicator { /* Base style for all indicators */
+    font-size: 0.85em;
+    font-weight: normal;
+    margin-left: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap; /* Prevent breaking */
+}
+
+.user-choice-indicator {
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle dark background */
+    color: #333;
+}
+
+.correct-answer-indicator {
+    background-color: #28a745; /* Green for correct */
+    color: white;
+}
+
+/* Congrats Modal (specific overrides for congratulations) */
+.modal-content h2 {
+    font-size: 2.5em;
+    color: #28a745; /* Green for congrats */
+    margin-bottom: 15px;
+}
+
+.modal-content .modal-confirm-btn { /* Changed from modal-confirm-btn to be more generic if used for success */
+    background-color: #28a745; /* Green for primary action */
+    color: white; /* Ensure text is white */
+}
+
+.modal-content .modal-confirm-btn:hover {
+    background-color: #218838;
+}
+
+/* Reset default button styles for consistency within review options */
+.options-review .review-option button {
+    all: unset; /* Remove all default button styles */
+    cursor: default; /* Not clickable */
+    font-size: inherit; /* Inherit font size */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    display: inline; /* Keep it inline */
+    color: inherit; /* Inherit color */
+    background: transparent; /* Transparent background */
 }
