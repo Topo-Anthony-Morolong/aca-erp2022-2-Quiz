@@ -16,7 +16,7 @@ export const questions: Question[] = [
         "options": ["git clone", "git pull", "git push", "git status"],
         "correctAnswer": "git push"
     },
-    {
+    /*{
         "question": "Which command is used to create a new branch in git?",
         "options": ["git commit", "git checkout", "git branch", "git clone"],
         "correctAnswer": "git branch"
@@ -250,5 +250,5 @@ export const questions: Question[] = [
         "question": "Which command is used to delete a specific stash?",
         "options": ["git stash drop <stash_id>", "git stash delete <stash_id>", "git stash remove <stash_id>", "git stash clear <stash_id>"],
         "correctAnswer": "git stash drop <stash_id>"
-    }
+    }*/
 ];
