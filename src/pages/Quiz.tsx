@@ -24,7 +24,7 @@ const Quiz = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from("Questions").select("q_Data");
+      const { data, error } = await supabase.from("Questions_table").select("q_Data");
 
       if (error || !data || data.length === 0) {
         console.error("Error fetching questions:", error);
